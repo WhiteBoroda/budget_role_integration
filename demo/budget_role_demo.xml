@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- demo/budget_role_demo.xml -->
+
+    <data noupdate="1">
+
+        <!-- ==================================================================== -->
+        <!-- ДЕМО ВИКОНАВЦІ БІЗНЕС-РОЛЕЙ ДЛЯ БЮДЖЕТУВАННЯ                         -->
+        <!-- ==================================================================== -->
+
+        <!-- Виконавці ролі "Складач бюджету" -->
+        <record id="demo_executor_creator_sales" model="business.role.executor">
+            <field name="role_id" ref="budget_role_integration.role_budget_creator"/>
+            <field name="user_id" ref="base.user_demo"/>
+            <field name="date" eval="(DateTime.now() - timedelta(days=30)).strftime('%Y-%m-%d')"/>
+            <field name="status_role">True</field>
+            <field name="res_model_address_1">budget.responsibility.center</field>
+            <field name="first_addressation_id" ref="budget.cbo_uk_sales"/>
+            <field name="note">Демо призначення складача бюджету для управління продажів</field>
+        </record>
+
+        <record id="demo_executor_creator_marketing" model="business.role.executor">
+            <field name="role_id" ref="budget_role_integration.role_budget_creator"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="date" eval="(DateTime.now() - timedelta(days=25)).strftime('%Y-%m-%d')"/>
+            <field name="status_role">True</field>
+            <field name="res_model_address_1">budget.responsibility.center</field>
+            <field name="first_addressation_id" ref="budget.cbo_uk_marketing"/>
+            <field name="note">Демо призначення складача бюджету для управління маркетингу</field>
+        </record>
+
+        <!-- Виконавці ролі "Перевіряючий бюджету" -->
+        <record id="demo_executor_reviewer_finance" model="business.role.executor">
+            <field name="role_id" ref="budget_role_integration.role_budget_reviewer"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="date" eval="(DateTime.now() - timedelta(days=20)).strftime('%Y-%m-%d')"/>
+            <field name="status_role">True</field>
+            <field name="res_model_address_1">budget.responsibility.center</field>
+            <field name="first_addressation_id" ref="budget.cbo_uk_finance"/>
+            <field name="note">Демо призначення перевіряючого бюджету для управління фінансів</field>
+        </record>
+
+        <record id="demo_executor_reviewer_pp_management" model="business.role.executor">
+            <field name="role_id" ref="budget_role_integration.role_budget_reviewer"/>
+            <field name="user_id" ref="base.user_demo"/>
+            <field name="date" eval="(DateTime.now() - timedelta(days=15)).strftime('%Y-%m-%d')"/>
+            <field name="status_role">True</field>
+            <field name="res_model_address_1">budget.responsibility.center</field>
+            <field name="first_addressation_id" ref="budget.cbo_pp_management"/>
+            <field name="note">Демо призначення перевіряючого бюджету для керівництва підприємством</field>
+        </record>
+
+        <!-- Виконавці ролі "Затверджуючий бюджету" -->
+        <record id="demo_executor_approver_uk_management" model="business.role.executor">
+            <field name="role_id" ref="budget_role_integration.role_budget_approver"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="date" eval="(DateTime.now() - timedelta(days=10)).strftime('%Y-%m-%d')"/>
+            <field name="status_role">True</field>
+            <field name="res_model_address_1">budget.responsibility.center</field>
+            <field name="first_addressation_id" ref="budget.cbo_uk_management"/>
+            <field name="note">Демо призначення затверджуючого бюджету для керівництва УК</field>
+        </record>
+
+        <record id="demo_executor_approver_pp_management" model="business.role.executor">
+            <field name="role_id" ref="budget_role_integration.role_budget_approver"/>
+            <field name="user_id" ref="base.user_demo"/>
+            <field name="date" eval="(DateTime.now() - timedelta(days=5)).strftime('%Y-%m-%d')"/>
+            <field name="status_role">True</field>
+            <field name="res_model_address_1">budget.responsibility.center</field>
+            <field name="first_addressation_id" ref="budget.cbo_pp_management"/>
+            <field name="note">Демо призначення затверджуючого бюджету для керівництва підприємством</field>
+        </record>
+
+        <!-- Виконавці додаткових ролей -->
+        <record id="demo_executor_controller_finance" model="business.role.executor">
+            <field name="role_id" ref="budget_role_integration.role_budget_controller"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="date" eval="(DateTime.now() - timedelta(days=8)).strftime('%Y-%m-%d')"/>
+            <field name="status_role">True</field>
+            <field name="res_model_address_1">budget.responsibility.center</field>
+            <field name="first_addressation_id" ref="budget.cbo_uk_finance"/>
+            <field name="note">Демо призначення контролера бюджету для управління фінансів</field>
+        </record>
+
+        <record id="demo_executor_analyst_sales" model="business.role.executor">
+            <field name="role_id" ref="budget_role_integration.role_budget_analyst"/>
+            <field name="user_id" ref="base.user_demo"/>
+            <field name="date" eval="(DateTime.now() - timedelta(days=12)).strftime('%Y-%m-%d')"/>
+            <field name="status_role">True</field>
+            <field name="res_model_address_1">budget.responsibility.center</field>
+            <field name="first_addressation_id" ref="budget.cbo_uk_sales"/>
+            <field name="note">Демо призначення аналітика бюджету для управління продажів</field>
+        </record>
+
+        <!-- ==================================================================== -->
+        <!-- ДЕМО БЮДЖЕТИ З ВИКОРИСТАННЯМ РОЛЕВОЇ СИСТЕМИ                          -->
+        <!-- ==================================================================== -->
+
+        <!-- Демо бюджет з ролевою системою для управління продажів -->
+        <record id="demo_budget_with_roles_sales" model="budget.plan">
+            <field name="name">Бюджет ФОТ управління продажів на лютий 2024 (з ролями)</field>
+            <field name="period_id" ref="budget.demo_period_2024_02"/>
+            <field name="budget_type_id" ref="budget.budget_type_01"/>
+            <field name="cbo_id" ref="budget.cbo_uk_sales"/>
+            <field name="responsible_user_id" ref="base.user_demo"/>
+            <field name="state">draft</field>
+            <field name="use_role_based_approval">True</field>
+            <field name="budget_creator_role_id" ref="budget_role_integration.role_budget_creator"/>
+            <field name="budget_reviewer_role_id" ref="budget_role_integration.role_budget_reviewer"/>
+            <field name="budget_approver_role_id" ref="budget_role_integration.role_budget_approver"/>
+            <field name="role_addressing_model_1">budget.responsibility.center</field>
+            <field name="role_addressing_id_1" ref="budget.cbo_uk_sales"/>
+            <field name="notes">Демонстраційний бюджет з використанням ролевої системи затвердження</field>
+        </record>
+
+        <!-- Демо бюджет для маркетингу -->
+        <record id="demo_budget_with_roles_marketing" model="budget.plan">
+            <field name="name">Бюджет маркетингових витрат на березень 2024 (з ролями)</field>
+            <field name="period_id" ref="budget.demo_period_2024_03"/>
+            <field name="budget_type_id" ref="budget.budget_type_05"/>
+            <field name="cbo_id" ref="budget.cbo_uk_marketing"/>
+            <field name="responsible_user_id" ref="base.user_admin"/>
+            <field name="state">planning</field>
+            <field name="use_role_based_approval">True</field>
+            <field name="budget_creator_role_id" ref="budget_role_integration.role_budget_creator"/>
+            <field name="budget_reviewer_role_id" ref="budget_role_integration.role_budget_analyst"/>
+            <field name="budget_approver_role_id" ref="budget_role_integration.role_budget_approver"/>
+            <field name="role_addressing_model_1">budget.responsibility.center</field>
+            <field name="role_addressing_id_1" ref="budget.cbo_uk_marketing"/>
+            <field name="notes">Бюджет маркетингу з аналітиком як перевіряючим</field>
+        </record>
+
+        <!-- Демо бюджет на рівні підприємства -->
+        <record id="demo_budget_with_roles_enterprise" model="budget.plan">
+            <field name="name">Зведений бюджет соціальних витрат на I квартал 2024</field>
+            <field name="period_id" ref="budget.demo_period_2024_q1"/>
+            <field name="budget_type_id" ref="budget.budget_type_03"/>
+            <field name="cbo_id" ref="budget.cbo_pp_management"/>
+            <field name="responsible_user_id" ref="base.user_admin"/>
+            <field name="state">coordination</field>
+            <field name="use_role_based_approval">True</field>
+            <field name="budget_creator_role_id" ref="budget_role_integration.role_budget_creator"/>
+            <field name="budget_reviewer_role_id" ref="budget_role_integration.role_budget_controller"/>
+            <field name="budget_approver_role_id" ref="budget_role_integration.role_budget_approver"/>
+            <field name="role_addressing_model_1">budget.responsibility.center</field>
+            <field name="role_addressing_id_1" ref="budget.cbo_pp_management"/>
+            <field name="notes">Зведений бюджет підприємства з контролером як перевіряючим</field>
+        </record>
+
+        <!-- ==================================================================== -->
+        <!-- ДЕМО ЛІНІЇ БЮДЖЕТУ З РОЛЯМИ                                           -->
+        <!-- ==================================================================== -->
+
+        <!-- Лінії для бюджету ФОТ продажів -->
+        <record id="demo_budget_line_roles_sales_01" model="budget.plan.line">
+            <field name="plan_id" ref="demo_budget_with_roles_sales"/>
+            <field name="description">Основна заробітна плата менеджерів з продажів</field>
+            <field name="calculation_method">norm_based</field>
+            <field name="quantity">5</field>
+            <field name="unit_price">12000</field>
+            <field name="planned_amount">60000</field>
+            <field name="calculation_basis">5 менеджерів × 12 000 грн середня зарплата</field>
+        </record>
+
+        <record id="demo_budget_line_roles_sales_02" model="budget.plan.line">
+            <field name="plan_id" ref="demo_budget_with_roles_sales"/>
+            <field name="description">Премії менеджерам з продажів</field>
+            <field name="calculation_method">percentage</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">15000</field>
+            <field name="planned_amount">15000</field>
+            <field name="calculation_basis">25% від основної заробітної плати</field>
+        </record>
+
+        <!-- Лінії для бюджету маркетингу -->
+        <record id="demo_budget_line_roles_marketing_01" model="budget.plan.line">
+            <field name="plan_id" ref="demo_budget_with_roles_marketing"/>
+            <field name="description">Витрати на рекламу в соціальних мережах</field>
+            <field name="calculation_method">manual</field>
+            <field name="quantity">3</field>
+            <field name="unit_price">15000</field>
+            <field name="planned_amount">45000</field>
+            <field name="calculation_basis">3 рекламні кампанії по 15 000 грн кожна</field>
+        </record>
+
+        <record id="demo_budget_line_roles_marketing_02" model="budget.plan.line">
+            <field name="plan_id" ref="demo_budget_with_roles_marketing"/>
+            <field name="description">Витрати на друковану рекламу</field>
+            <field name="calculation_method">manual</field>
+            <field name="quantity">2</field>
+            <field name="unit_price">8000</field>
+            <field name="planned_amount">16000</field>
+            <field name="calculation_basis">2 друковані рекламні матеріали</field>
+        </record>
+
+        <!-- Лінії для соціального бюджету -->
+        <record id="demo_budget_line_roles_social_01" model="budget.plan.line">
+            <field name="plan_id" ref="demo_budget_with_roles_enterprise"/>
+            <field name="description">Матеріальна допомога ветеранам</field>
+            <field name="calculation_method">statistical</field>
+            <field name="quantity">20</field>
+            <field name="unit_price">2000</field>
+            <field name="planned_amount">40000</field>
+            <field name="calculation_basis">20 ветеранів × 2 000 грн на квартал</field>
+        </record>
+
+        <record id="demo_budget_line_roles_social_02" model="budget.plan.line">
+            <field name="plan_id" ref="demo_budget_with_roles_enterprise"/>
+            <field name="description">Новорічні подарунки для дітей співробітників</field>
+            <field name="calculation_method">statistical</field>
+            <field name="quantity">50</field>
+            <field name="unit_price">500</field>
+            <field name="planned_amount">25000</field>
+            <field name="calculation_basis">50 дітей × 500 грн за подарунок</field>
+        </record>
+
+        <!-- ==================================================================== -->
+        <!-- ДЕМО ІСТОРІЇ ЗАМІНЕНЬ РОЛЕЙ                                           -->
+        <!-- ==================================================================== -->
+
+        <!-- Демо заміщення виконавця під час відпустки -->
+        <record id="demo_executor_replacement_vacation" model="business.role.executor">
+            <field name="role_id" ref="budget_role_integration.role_budget_reviewer"/>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="date" eval="(DateTime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"/>
+            <field name="status_role">True</field>
+            <field name="res_model_address_1">budget.responsibility.center</field>
+            <field name="first_addressation_id" ref="budget.cbo_uk_marketing"/>
+            <field name="note">Тимчасове заміщення під час відпустки основного перевіряючого</field>
+        </record>
+
+        <!-- Деактивація попереднього виконавця -->
+        <record id="demo_executor_deactivated" model="business.role.executor">
+            <field name="role_id" ref="budget_role_integration.role_budget_reviewer"/>
+            <field name="user_id" ref="base.user_demo"/>
+            <field name="date" eval="(DateTime.now() - timedelta(days=4)).strftime('%Y-%m-%d')"/>
+            <field name="status_role">False</field>
+            <field name="res_model_address_1">budget.responsibility.center</field>
+            <field name="first_addressation_id" ref="budget.cbo_uk_marketing"/>
+            <field name="note">Деактивація на час відпустки</field>
+        </record>
+
+    </data>
+</odoo>

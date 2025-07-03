@@ -36,23 +36,45 @@ class BudgetPlan(models.Model):
         help='Бізнес-роль для затвердження бюджету'
     )
 
+    budget_viewer_role_id = fields.Many2one(
+        'business.role.catalog',
+        string='Роль "Переглядач бюджету"',
+        domain=[('role', 'ilike', 'Переглядач')],
+        help='Бізнес-роль для перегляду бюджету та контролю залишків'
+    )
+
     # Обчислювальні поля для визначення виконавців ролей
     current_creator_ids = fields.Many2many(
         'res.users',
+        relation='budget_plan_creator_rel',  # ДОБАВЛЕНО
+        column1='plan_id',  # ДОБАВЛЕНО
+        column2='creator_id',  # ДОБАВЛЕНО
         compute='_compute_current_executors',
         string='Поточні складачі бюджету'
     )
 
     current_reviewer_ids = fields.Many2many(
         'res.users',
+        relation='budget_plan_reviewer_rel',  # ДОБАВЛЕНО
+        column1='plan_id',  # ДОБАВЛЕНО
+        column2='reviewer_id',  # ДОБАВЛЕНО
         compute='_compute_current_executors',
         string='Поточні перевіряючі бюджету'
     )
 
     current_approver_ids = fields.Many2many(
         'res.users',
+        relation='budget_plan_approver_rel',  # ДОБАВЛЕНО
+        column1='plan_id',  # ДОБАВЛЕНО
+        column2='approver_id',  # ДОБАВЛЕНО
         compute='_compute_current_executors',
         string='Поточні затверджуючі бюджету'
+    )
+
+    current_viewer_ids = fields.Many2many(
+        'res.users',
+        compute='_compute_current_executors',
+        string='Поточні переглядачі бюджету'
     )
 
     # Використання системи ролей для затвердження
@@ -80,7 +102,8 @@ class BudgetPlan(models.Model):
     # ==================================================
 
     @api.depends('budget_creator_role_id', 'budget_reviewer_role_id',
-                 'budget_approver_role_id', 'cbo_id', 'use_role_based_approval')
+                 'budget_approver_role_id', 'budget_viewer_role_id',
+                 'cbo_id', 'use_role_based_approval')
     def _compute_current_executors(self):
         """Обчислення поточних виконавців бізнес-ролей"""
         for record in self:
@@ -88,6 +111,7 @@ class BudgetPlan(models.Model):
                 record.current_creator_ids = False
                 record.current_reviewer_ids = False
                 record.current_approver_ids = False
+                record.current_viewer_ids = False
                 continue
 
             today = fields.Date.today()
@@ -105,6 +129,11 @@ class BudgetPlan(models.Model):
             # Затверджуючі бюджету
             record.current_approver_ids = record._get_role_executors(
                 record.budget_approver_role_id, today
+            )
+
+            # Переглядачі бюджету
+            record.current_viewer_ids = record._get_role_executors(
+                record.budget_viewer_role_id, today
             )
 
     def _get_role_executors(self, role_catalog, target_date):
@@ -179,6 +208,14 @@ class BudgetPlan(models.Model):
             ], limit=1)
             self.budget_approver_role_id = approver_role.id
 
+        if not self.budget_viewer_role_id:
+            viewer_role = role_catalog.search([
+                ('role', 'ilike', 'переглядач'),
+                ('role', 'ilike', 'бюджет')
+            ], limit=1)
+            if viewer_role:
+                self.budget_viewer_role_id = viewer_role
+
         # Встановлюємо адресацію
         self.role_addressing_id_1 = self.cbo_id.id
 
@@ -230,25 +267,6 @@ class BudgetPlan(models.Model):
         """Перевірка наявності виконавців для всіх ролей"""
         errors = []
 
-        if not self.current_pereviriauch_ids:
-            errors.append('Не знайдено виконавців ролі "Перевіряючий бюджету"')
-
-        if not self.current_zatverdzhuiuch_ids:
-            errors.append('Не знайдено виконавців ролі "Затверджуючий бюджету"')
-
-        if errors:
-            raise ValidationError('\n'.join(errors))
-
-    def _check_user_role_permissions(self, action):
-        """Перевірка прав поточного користувача для виконання дії"""
-        current_user = self.env.user
-
-        if action in ['approve']:
-            def _validate_role_executors(self):
-
-                """Перевірка наявності виконавців для всіх ролей"""
-        errors = []
-
         if not self.current_reviewer_ids:
             errors.append('Не знайдено виконавців ролі "Перевіряючий бюджету"')
 
@@ -274,6 +292,21 @@ class BudgetPlan(models.Model):
                 raise UserError(
                     f'Користувач {current_user.name} не має прав для відправки бюджету на доопрацювання. '
                     f'Необхідні ролі: {self.budget_reviewer_role_id.role} або {self.budget_approver_role_id.role}'
+                )
+
+        elif action in ['edit']:
+            if current_user not in self.current_creator_ids and current_user not in self.current_reviewer_ids:
+                raise UserError(
+                    f'Користувач {current_user.name} не має прав для редагування цього бюджету. '
+                    f'Необхідні ролі: {self.budget_creator_role_id.role} або {self.budget_reviewer_role_id.role}'
+                )
+
+        elif action in ['view']:
+            allowed_users = (self.current_creator_ids + self.current_reviewer_ids +
+                           self.current_approver_ids + self.current_viewer_ids)
+            if current_user not in allowed_users:
+                raise UserError(
+                    f'Користувач {current_user.name} не має прав для перегляду цього бюджету'
                 )
 
     def _notify_role_executors(self, notification_type):
@@ -307,3 +340,104 @@ class BudgetPlan(models.Model):
                     summary=f'Бюджет потребує доопрацювання: {self.display_name}',
                     note=f'Бюджет відправлено на доопрацювання користувачем {self.env.user.name}'
                 )
+
+    # ==================================================
+    # ПРАВА ДОСТУПУ НА ОСНОВІ РОЛЕЙ
+    # ==================================================
+
+    def check_role_access(self, role_type='view'):
+        """Перевірка доступу користувача до бюджету на основі ролей"""
+        current_user = self.env.user
+
+        if not self.use_role_based_approval:
+            # Якщо ролі не використовуються, використовуємо стандартну логіку
+            return True
+
+        # Перевіряємо чи користувач є виконавцем будь-якої ролі
+        user_roles = []
+
+        if current_user.id in self.current_creator_ids.ids:
+            user_roles.append('creator')
+
+        if current_user.id in self.current_reviewer_ids.ids:
+            user_roles.append('reviewer')
+
+        if current_user.id in self.current_approver_ids.ids:
+            user_roles.append('approver')
+
+        if current_user.id in self.current_viewer_ids.ids:
+            user_roles.append('viewer')
+
+        # Правила доступу
+        if role_type == 'view':
+            # Переглядати можуть всі, хто має будь-яку роль
+            return len(user_roles) > 0
+
+        elif role_type == 'write':
+            # Редагувати можуть тільки складачі та перевіряючі
+            return 'creator' in user_roles or 'reviewer' in user_roles
+
+        elif role_type == 'approve':
+            # Затверджувати можуть тільки затверджуючі
+            return 'approver' in user_roles
+
+        return False
+
+    def get_user_budget_roles(self):
+        """Отримання ролей поточного користувача в цьому бюджеті"""
+        current_user = self.env.user
+        roles = []
+
+        if current_user.id in self.current_creator_ids.ids:
+            roles.append('Складач бюджету')
+
+        if current_user.id in self.current_reviewer_ids.ids:
+            roles.append('Перевіряючий бюджету')
+
+        if current_user.id in self.current_approver_ids.ids:
+            roles.append('Затверджуючий бюджету')
+
+        if current_user.id in self.current_viewer_ids.ids:
+            roles.append('Переглядач бюджету')
+
+        return roles
+
+    def action_show_budget_execution(self):
+        """Показати виконання бюджету по проводках"""
+        self.ensure_one()
+
+        # Перевіряємо права доступу
+        if not self.check_role_access('view'):
+            raise UserError('У вас немає прав для перегляду цього бюджету')
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Виконання бюджету: {self.display_name}',
+            'res_model': 'budget.execution',
+            'view_mode': 'tree,form',
+            'domain': [('budget_plan_id', '=', self.id)],
+            'context': {
+                'default_budget_plan_id': self.id,
+                'search_default_current_month': True
+            }
+        }
+
+    def action_show_budget_lines_analysis(self):
+        """Показати аналіз по лініях бюджету"""
+        self.ensure_one()
+
+        # Перевіряємо права доступу
+        if not self.check_role_access('view'):
+            raise UserError('У вас немає прав для перегляду цього бюджету')
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Лінії бюджету: {self.display_name}',
+            'res_model': 'budget.plan.line',
+            'view_mode': 'tree,form',
+            'domain': [('plan_id', '=', self.id)],
+            'context': {
+                'default_plan_id': self.id,
+                'show_variance_analysis': True
+            }
+        }

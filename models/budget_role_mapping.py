@@ -52,6 +52,11 @@ class BudgetRoleMapping(models.Model):
         'Роль затверджуючого бюджету'
     )
 
+    budget_viewer_role_id = fields.Many2one(
+        'business.role.catalog',
+        'Роль переглядача бюджету'
+    )
+
     # Налаштування адресації
     use_cbo_addressing = fields.Boolean(
         'Використовувати адресацію по ЦБО',
@@ -64,29 +69,34 @@ class BudgetRoleMapping(models.Model):
         """Отримання ролей для конкретного бюджету на основі налаштувань"""
         domain = [('active', '=', True)]
 
-        # Фільтрація по критеріям
+        # Фільтрація по критеріях
         if budget_plan.budget_type_id:
-            domain.append(('budget_type_id', 'in', [False, budget_plan.budget_type_id.id]))
+            domain.append(('budget_type_id', '=', budget_plan.budget_type_id.id))
 
         if budget_plan.cbo_id and budget_plan.cbo_id.cbo_type:
-            domain.append(('cbo_type', 'in', [False, budget_plan.cbo_id.cbo_type]))
+            domain.append(('cbo_type', '=', budget_plan.cbo_id.cbo_type))
 
-        if budget_plan.budget_level:
-            domain.append(('budget_level', 'in', [False, budget_plan.budget_level]))
+        if budget_plan.cbo_id and budget_plan.cbo_id.budget_level:
+            domain.append(('budget_level', '=', budget_plan.cbo_id.budget_level))
 
         if budget_plan.company_id:
-            domain.append(('company_id', 'in', [False, budget_plan.company_id.id]))
+            domain.extend([
+                '|',
+                ('company_id', '=', False),
+                ('company_id', '=', budget_plan.company_id.id)
+            ])
 
-        # Пошук найкращого співпадіння
-        mappings = self.search(domain, order='sequence')
+        # Шукаємо найбільш відповідне налаштування
+        mappings = self.search(domain, order='sequence, id')
 
         if mappings:
-            best_mapping = mappings[0]
+            mapping = mappings[0]  # Беремо перше за послідовністю
             return {
-                'budget_creator_role_id': best_mapping.budget_creator_role_id.id,
-                'budget_reviewer_role_id': best_mapping.budget_reviewer_role_id.id,
-                'budget_approver_role_id': best_mapping.budget_approver_role_id.id,
-                'use_cbo_addressing': best_mapping.use_cbo_addressing
+                'budget_creator_role_id': mapping.budget_creator_role_id.id if mapping.budget_creator_role_id else False,
+                'budget_reviewer_role_id': mapping.budget_reviewer_role_id.id if mapping.budget_reviewer_role_id else False,
+                'budget_approver_role_id': mapping.budget_approver_role_id.id if mapping.budget_approver_role_id else False,
+                'budget_viewer_role_id': mapping.budget_viewer_role_id.id if mapping.budget_viewer_role_id else False,
+                'use_role_based_approval': True
             }
 
         return {}

@@ -10,6 +10,9 @@ class BudgetRoleMassAssignmentWizard(models.TransientModel):
     # Фільтри для вибору бюджетів
     budget_ids = fields.Many2many(
         'budget.plan',
+        relation='budget_mass_assign_plan_rel',  # ИСПРАВЛЕНО
+        column1='wizard_id',  # ДОБАВЛЕНО
+        column2='plan_id',  # ДОБАВЛЕНО
         string='Бюджети для обробки',
         domain=[('use_role_based_approval', '=', False)]
     )
@@ -17,17 +20,29 @@ class BudgetRoleMassAssignmentWizard(models.TransientModel):
     filter_by_cbo = fields.Boolean('Фільтрувати за ЦБО', default=False)
     cbo_ids = fields.Many2many(
         'budget.responsibility.center',
-        relation='budget_mass_assign_cbo_rel',  # Короткое имя таблицы
-        column1='wizard_id',
-        column2='cbo_id',
+        relation='budget_mass_assign_cbo_rel',  # ИСПРАВЛЕНО
+        column1='wizard_id',  # ДОБАВЛЕНО
+        column2='cbo_id',  # ДОБАВЛЕНО
         string='ЦБО'
     )
 
     filter_by_type = fields.Boolean('Фільтрувати за типом бюджету', default=False)
-    budget_type_ids = fields.Many2many('budget.type', string='Типи бюджетів')
+    budget_type_ids = fields.Many2many(
+        'budget.type',
+        relation='budget_mass_assign_type_rel',  # ИСПРАВЛЕНО
+        column1='wizard_id',  # ДОБАВЛЕНО
+        column2='type_id',  # ДОБАВЛЕНО
+        string='Типи бюджетів'
+    )
 
     filter_by_period = fields.Boolean('Фільтрувати за періодом', default=False)
-    period_ids = fields.Many2many('budget.period', string='Періоди')
+    period_ids = fields.Many2many(
+        'budget.period',
+        relation='budget_mass_assign_period_rel',  # ИСПРАВЛЕНО
+        column1='wizard_id',  # ДОБАВЛЕНО
+        column2='period_id',  # ДОБАВЛЕНО
+        string='Періоди'
+    )
 
     filter_by_state = fields.Boolean('Фільтрувати за статусом', default=True)
     state_filter = fields.Selection([

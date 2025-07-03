@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+# Імпорт моделей
 from . import models
 from . import wizard
 
@@ -15,6 +18,31 @@ def _post_init_hook(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
 
     try:
+        # Перевіряємо наявність залежних модулів
+        required_modules = ['budget', 'business_role_executor']
+        missing_modules = []
+
+        for module_name in required_modules:
+            module = env['ir.module.module'].search([
+                ('name', '=', module_name),
+                ('state', '=', 'installed')
+            ])
+            if not module:
+                missing_modules.append(module_name)
+
+        if missing_modules:
+            _logger.error(f'Відсутні обов\'язкові модулі: {", ".join(missing_modules)}')
+            return
+
+        # Перевіряємо доступність моделей
+        try:
+            business_role_catalog = env['business.role.catalog']
+            budget_plan = env['budget.plan']
+            _logger.info('Всі необхідні моделі доступні')
+        except Exception as e:
+            _logger.error(f'Помилка доступу до моделей: {str(e)}')
+            return
+
         # 1. Автоматичне призначення ролей для існуючих бюджетів
         existing_budgets = env['budget.plan'].search([
             ('use_role_based_approval', '=', False)
@@ -23,15 +51,19 @@ def _post_init_hook(cr, registry):
         updated_count = 0
         for budget in existing_budgets:
             # Спробуємо автоматично призначити ролі
-            mapping_data = env['budget.role.mapping'].get_roles_for_budget(budget)
-            if mapping_data:
-                budget.write({
-                    'budget_creator_role_id': mapping_data.get('budget_creator_role_id'),
-                    'budget_reviewer_role_id': mapping_data.get('budget_reviewer_role_id'),
-                    'budget_approver_role_id': mapping_data.get('budget_approver_role_id'),
-                    'use_role_based_approval': True
-                })
-                updated_count += 1
+            try:
+                mapping_data = env['budget.role.mapping'].get_roles_for_budget(budget)
+                if mapping_data:
+                    budget.write({
+                        'budget_creator_role_id': mapping_data.get('budget_creator_role_id'),
+                        'budget_reviewer_role_id': mapping_data.get('budget_reviewer_role_id'),
+                        'budget_approver_role_id': mapping_data.get('budget_approver_role_id'),
+                        'budget_viewer_role_id': mapping_data.get('budget_viewer_role_id'),
+                        'use_role_based_approval': True
+                    })
+                    updated_count += 1
+            except Exception as e:
+                _logger.warning(f'Не вдалося оновити бюджет {budget.name}: {str(e)}')
 
         _logger.info(f'Автоматично оновлено {updated_count} існуючих бюджетів з ролями')
 
@@ -41,22 +73,27 @@ def _post_init_hook(cr, registry):
         standard_roles = [
             'Складач бюджету',
             'Перевіряючий бюджету',
-            'Затверджуючий бюджету'
+            'Затверджуючий бюджету',
+            'Переглядач бюджету'
         ]
 
         for role_name in standard_roles:
             existing_role = role_catalog.search([('role', '=', role_name)], limit=1)
             if not existing_role:
-                _logger.warning(f'Стандартна роль "{role_name}" не знайдена. Створіть її вручну.')
+                _logger.warning(
+                    f'Стандартна роль "{role_name}" не знайдена. Вона буде створена з demo/початкових даних.')
 
         # 3. Перевірка типів адресації
-        addressing_type = env['addressing.type']
-        cbo_addressing = addressing_type.search([
-            ('name', '=', 'Центр бюджетної відповідальності')
-        ], limit=1)
+        try:
+            addressing_type = env['addressing.type']
+            cbo_addressing = addressing_type.search([
+                ('name', '=', 'Центр бюджетної відповідальності')
+            ], limit=1)
 
-        if not cbo_addressing:
-            _logger.warning('Тип адресації "Центр бюджетної відповідальності" не знайдений')
+            if not cbo_addressing:
+                _logger.warning('Тип адресації "Центр бюджетної відповідальності" не знайдений')
+        except Exception as e:
+            _logger.warning(f'Не вдалося перевірити типи адресації: {str(e)}')
 
         # 4. Створення початкових налаштувань якщо їх немає
         mapping_count = env['budget.role.mapping'].search_count([])
@@ -87,7 +124,8 @@ def _uninstall_hook(cr, registry):
                 'use_role_based_approval': False,
                 'budget_creator_role_id': False,
                 'budget_reviewer_role_id': False,
-                'budget_approver_role_id': False
+                'budget_approver_role_id': False,
+                'budget_viewer_role_id': False
             })
             _logger.info(f'Відключено систему ролей для {len(all_budgets)} бюджетів')
 
@@ -103,24 +141,19 @@ def _uninstall_hook(cr, registry):
             templates.unlink()
             _logger.info(f'Видалено {len(templates)} шаблонів ролей')
 
-        # 4. Відновлення старих полей відповідальних (якщо потрібно)
+        # 4. Відновлення старих полів відповідальних (якщо потрібно)
         budgets_with_roles = env['budget.plan'].search([
-            '|', '|',
+            '|', '|', '|',
             ('current_creator_ids', '!=', False),
             ('current_reviewer_ids', '!=', False),
-            ('current_approver_ids', '!=', False)
+            ('current_approver_ids', '!=', False),
+            ('current_viewer_ids', '!=', False)
         ])
 
         for budget in budgets_with_roles:
             # Встановлюємо старі поля на основі ролей
             if budget.current_creator_ids and not budget.responsible_user_id:
                 budget.responsible_user_id = budget.current_creator_ids[0]
-
-            if budget.current_reviewer_ids and not budget.coordinator_user_id:
-                budget.coordinator_user_id = budget.current_reviewer_ids[0]
-
-            if budget.current_approver_ids and not budget.approver_user_id:
-                budget.approver_user_id = budget.current_approver_ids[0]
 
         _logger.info('uninstall_hook успішно завершений')
 

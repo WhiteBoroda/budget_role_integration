@@ -33,6 +33,12 @@
         <field name="personified">True</field>
     </record>
 
+    <record id="role_budget_viewer" model="business.role.catalog">
+        <field name="role">Переглядач бюджету</field>
+        <field name="addressed">True</field>
+        <field name="personified">True</field>
+    </record>
+
     <!-- ==================================================================== -->
     <!-- ФАЙЛ: data/budget_role_mapping_data.xml -->
     <!-- ==================================================================== -->

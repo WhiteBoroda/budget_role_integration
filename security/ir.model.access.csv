@@ -1,19 +1,85 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-# Основні моделі
+
+# =====================================================================
+# ПРАВА ДОСТУПУ ДО МОДЕЛЕЙ BUSINESS_ROLE_EXECUTOR
+# =====================================================================
+
+# Каталог бізнес-ролей
+access_business_role_catalog_budget_user,business.role.catalog.budget.user,business_role_executor.model_business_role_catalog,budget.group_budget_user,1,0,0,0
+access_business_role_catalog_budget_manager,business.role.catalog.budget.manager,business_role_executor.model_business_role_catalog,budget.group_budget_manager,1,1,1,1
+
+# Виконавці бізнес-ролей
+access_business_role_executor_budget_user,business.role.executor.budget.user,business_role_executor.model_business_role_executor,budget.group_budget_user,1,0,0,0
+access_business_role_executor_budget_manager,business.role.executor.budget.manager,business_role_executor.model_business_role_executor,budget.group_budget_manager,1,1,1,1
+
+# Поточні ролі
+access_business_role_actual_budget_user,business.role.actual.budget.user,business_role_executor.model_business_role_actual,budget.group_budget_user,1,0,0,0
+access_business_role_actual_budget_manager,business.role.actual.budget.manager,business_role_executor.model_business_role_actual,budget.group_budget_manager,1,1,1,1
+
+# Заміщення ролей
+access_business_role_substitution_budget_user,business.role.substitution.budget.user,business_role_executor.model_business_role_substitution,budget.group_budget_user,1,0,0,0
+access_business_role_substitution_budget_manager,business.role.substitution.budget.manager,business_role_executor.model_business_role_substitution,budget.group_budget_manager,1,1,1,1
+
+# Лінії заміщення
+access_business_role_substitution_lines_budget_user,business.role.substitution.lines.budget.user,business_role_executor.model_business_role_substitution_lines,budget.group_budget_user,1,0,0,0
+access_business_role_substitution_lines_budget_manager,business.role.substitution.lines.budget.manager,business_role_executor.model_business_role_substitution_lines,budget.group_budget_manager,1,1,1,1
+
+# Типи адресації
+access_addressing_type_budget_user,addressing.type.budget.user,business_role_executor.model_addressing_type,budget.group_budget_user,1,0,0,0
+access_addressing_type_budget_manager,addressing.type.budget.manager,business_role_executor.model_addressing_type,budget.group_budget_manager,1,1,1,1
+
+# =====================================================================
+# ОСНОВНІ МОДЕЛІ BUDGET_ROLE_INTEGRATION
+# =====================================================================
+
+# Налаштування ролей
 access_budget_role_mapping_user,budget.role.mapping.user,model_budget_role_mapping,budget.group_budget_user,1,0,0,0
 access_budget_role_mapping_manager,budget.role.mapping.manager,model_budget_role_mapping,budget.group_budget_manager,1,1,1,1
+
+# Шаблони ролей
 access_budget_role_template_user,budget.role.template.user,model_budget_role_template,budget.group_budget_user,1,0,0,0
 access_budget_role_template_manager,budget.role.template.manager,model_budget_role_template,budget.group_budget_manager,1,1,1,1
 
-# Wizard'и
-access_budget_role_executor_wizard_user,budget.role.executor.wizard.user,model_budget_role_executor_wizard,budget.group_budget_user,1,1,1,1
-access_budget_role_mass_assignment_wizard_manager,budget.role.mass.assignment.wizard.manager,model_budget_role_mass_assignment_wizard,budget.group_budget_manager,1,1,1,1
-access_budget_role_validation_wizard_user,budget.role.validation.wizard.user,model_budget_role_validation_wizard,budget.group_budget_user,1,1,1,1
-access_budget_role_validation_line_user,budget.role.validation.line.user,model_budget_role_validation_line,budget.group_budget_user,1,1,1,1
-access_budget_role_report_wizard_user,budget.role.report.wizard.user,model_budget_role_report_wizard,budget.group_budget_user,1,1,1,1
+# =====================================================================
+# WIZARD'И
+# =====================================================================
 
-# Допоміжні моделі
+# Майстер виконавців ролей
+access_budget_role_executor_wizard_user,budget.role.executor.wizard.user,model_budget_role_executor_wizard,budget.group_budget_user,1,1,1,1
+access_budget_role_executor_wizard_manager,budget.role.executor.wizard.manager,model_budget_role_executor_wizard,budget.group_budget_manager,1,1,1,1
+
+# Майстер масового призначення
+access_budget_role_mass_assignment_wizard_user,budget.role.mass.assignment.wizard.user,model_budget_role_mass_assignment_wizard,budget.group_budget_user,1,1,1,1
+access_budget_role_mass_assignment_wizard_manager,budget.role.mass.assignment.wizard.manager,model_budget_role_mass_assignment_wizard,budget.group_budget_manager,1,1,1,1
+
+# Майстер валідації
+access_budget_role_validation_wizard_user,budget.role.validation.wizard.user,model_budget_role_validation_wizard,budget.group_budget_user,1,1,1,1
+access_budget_role_validation_wizard_manager,budget.role.validation.wizard.manager,model_budget_role_validation_wizard,budget.group_budget_manager,1,1,1,1
+
+# Лінії валідації
+access_budget_role_validation_line_user,budget.role.validation.line.user,model_budget_role_validation_line,budget.group_budget_user,1,1,1,1
+access_budget_role_validation_line_manager,budget.role.validation.line.manager,model_budget_role_validation_line,budget.group_budget_manager,1,1,1,1
+
+# Майстер звітів
+access_budget_role_report_wizard_user,budget.role.report.wizard.user,model_budget_role_report_wizard,budget.group_budget_user,1,1,1,1
+access_budget_role_report_wizard_manager,budget.role.report.wizard.manager,model_budget_role_report_wizard,budget.group_budget_manager,1,1,1,1
+
+# =====================================================================
+# ДОПОМІЖНІ МОДЕЛІ
+# =====================================================================
+
+# Історія ролей
 access_budget_role_history_line_user,budget.role.history.line.user,model_budget_role_history_line,budget.group_budget_user,1,0,0,0
+access_budget_role_history_line_manager,budget.role.history.line.manager,model_budget_role_history_line,budget.group_budget_manager,1,1,1,1
+
+# Утиліти ролей
 access_budget_role_utils_user,budget.role.utils.user,model_budget_role_utils,budget.group_budget_user,1,0,0,0
-access_budget_role_notifications_user,budget.role.notifications.user,model_budget_role_notifications,budget.group_budget_user,1,0,0,0
+access_budget_role_utils_manager,budget.role.utils.manager,model_budget_role_utils,budget.group_budget_manager,1,1,1,1
+
+# Сповіщення ролей
+access_budget_role_notifications_user,budget.role.notifications.user,model_budget_role_notifications,budget.group_budget_user,1,1,1,0
+access_budget_role_notifications_manager,budget.role.notifications.manager,model_budget_role_notifications,budget.group_budget_manager,1,1,1,1
+
+# Валідатори ролей
 access_budget_role_validators_user,budget.role.validators.user,model_budget_role_validators,budget.group_budget_user,1,0,0,0
+access_budget_role_validators_manager,budget.role.validators.manager,model_budget_role_validators,budget.group_budget_manager,1,1,1,1

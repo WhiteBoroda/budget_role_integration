@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Правила доступу для ролевої системи бюджетування -->
+    <!-- Правила доступу для ролевої системи бюджетування з підтримкою Viewer -->
 
-    <!-- Користувачі можуть бачити тільки свої бюджети або де вони виконавці ролей -->
+    <!-- Користувачі можуть бачити тільки свої бюджети або де вони виконавці ролей (включно з Viewer) -->
     <record id="budget_plan_role_rule" model="ir.rule">
         <field name="name">Budget Plan Role Access Rule</field>
         <field name="model_id" ref="budget.model_budget_plan"/>
         <field name="domain_force">
-            ['|', '|', '|', '|', '|',
+            ['|', '|', '|', '|', '|', '|',
              ('responsible_user_id', '=', user.id),
              ('current_creator_ids', 'in', [user.id]),
              ('current_reviewer_ids', 'in', [user.id]),
              ('current_approver_ids', 'in', [user.id]),
+             ('current_viewer_ids', 'in', [user.id]),
              ('create_uid', '=', user.id),
              ('company_id', 'in', company_ids)]
         </field>
         <field name="groups" eval="[(4, ref('budget.group_budget_user'))]"/>
+    </record>
+
+    <!-- Спеціальне правило для переглядачів - тільки читання -->
+    <record id="budget_plan_viewer_rule" model="ir.rule">
+        <field name="name">Budget Plan Viewer Rule</field>
+        <field name="model_id" ref="budget.model_budget_plan"/>
+        <field name="domain_force">
+            [('current_viewer_ids', 'in', [user.id])]
+        </field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('budget_role_integration.group_budget_role_viewer'))]"/>
     </record>
 
     <!-- Менеджери мають повний доступ -->
@@ -32,7 +47,7 @@
         <field name="name">Budget Role Mapping Admin Rule</field>
         <field name="model_id" ref="model_budget_role_mapping"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('group_budget_role_admin'))]"/>
+        <field name="groups" eval="[(4, ref('budget_role_integration.group_budget_role_admin'))]"/>
     </record>
 
     <!-- Звичайні користувачі можуть тільки читати налаштування -->
