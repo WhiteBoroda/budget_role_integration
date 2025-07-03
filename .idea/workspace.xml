@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="22faad7a-2292-4f84-90cf-8f63bb1ba0a9" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/budget_role_integration.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/__manifest__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controllers/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controllers/budget_role_portal.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/addressing_type_budget.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/budget_role_automation.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/budget_role_catalog_data.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/budget_role_mapping_data.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/budget_role_menu.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/budget_role_sequence.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/ir_cron_budget_roles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/mail_template_budget_roles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/budget_role_demo.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/budget_plan_roles.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/budget_plan_roles_enhanced.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/budget_role_integration_hooks.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/budget_role_mapping.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/budget_role_notifications.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/budget_role_template.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/budget_role_utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/budget_role_validators.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reports/budget_role_actions.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reports/budget_role_reports.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/security/budget_role_groups.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/security/budget_role_security.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/security/ir.model.access.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/description/icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/description/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/src/css/budget_role_styles.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_budget_role_integration.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_budget_role_mapping.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_budget_role_permissions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_budget_role_workflow.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/budget_dashboards_roles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/budget_plan_roles_views.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/budget_role_executor_wizard_views.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/budget_role_mapping_views.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/budget_role_wizard_views.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/portal_budget_roles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/wizard/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/wizard/budget_role_executor_wizard.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/wizard/budget_role_mass_assignment_wizard.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/wizard/budget_role_report_wizard.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/wizard/budget_role_validation_wizard.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="2zK4YWm2g8fUqN5sAk9nHLKz0Mj" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.intellij.pycharm.community.ide.impl.configuration.PythonContentEntriesConfigurable",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-PY-251.26094.141" />
+        <option value="bundled-python-sdk-9f8e2b94138c-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26094.141" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="22faad7a-2292-4f84-90cf-8f63bb1ba0a9" name="Changes" comment="" />
+      <created>1751466478920</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1751466478920</updated>
+      <workItem from="1751466479991" duration="49566000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
