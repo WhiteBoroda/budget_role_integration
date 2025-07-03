@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- Dashboard для контролю ролей в бюджетуванні -->
+    <record id="action_budget_roles_dashboard" model="ir.actions.act_window">
+        <field name="name">Контроль ролей в бюджетуванні</field>
+        <field name="res_model">budget.plan</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('use_role_based_approval', '=', True)]</field>
+        <field name="context">{
+            'search_default_group_state': 1,
+            'search_default_active_roles': 1
+        }</field>
+    </record>
+
+    <!-- Action для бюджетів без призначених ролей -->
+    <record id="action_budget_without_roles" model="ir.actions.act_window">
+        <field name="name">Бюджети без ролей</field>
+        <field name="res_model">budget.plan</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[
+            '|', '|',
+            ('budget_creator_role_id', '=', False),
+            ('budget_reviewer_role_id', '=', False),
+            ('budget_approver_role_id', '=', False),
+            ('state', 'in', ['draft', 'planning'])
+        ]</field>
+        <field name="context">{'search_default_needs_roles': 1}</field>
+    </record>
+
+    <!-- Action для бюджетів з проблемами ролей -->
+    <record id="action_budget_role_issues" model="ir.actions.act_window">
+        <field name="name">Проблеми з ролями в бюджетуванні</field>
+        <field name="res_model">budget.plan</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[
+            ('use_role_based_approval', '=', True),
+            ('state', '=', 'coordination'),
+            '|',
+            ('current_reviewer_ids', '=', False),
+            ('current_approver_ids', '=', False)
+        ]</field>
+        <field name="context">{
+            'search_default_coordination': 1,
+            'search_default_role_issues': 1
+        }</field>
+    </record>
+
+</odoo>

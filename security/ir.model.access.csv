@@ -1,0 +1,19 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+# Основні моделі
+access_budget_role_mapping_user,budget.role.mapping.user,model_budget_role_mapping,budget.group_budget_user,1,0,0,0
+access_budget_role_mapping_manager,budget.role.mapping.manager,model_budget_role_mapping,budget.group_budget_manager,1,1,1,1
+access_budget_role_template_user,budget.role.template.user,model_budget_role_template,budget.group_budget_user,1,0,0,0
+access_budget_role_template_manager,budget.role.template.manager,model_budget_role_template,budget.group_budget_manager,1,1,1,1
+
+# Wizard'и
+access_budget_role_executor_wizard_user,budget.role.executor.wizard.user,model_budget_role_executor_wizard,budget.group_budget_user,1,1,1,1
+access_budget_role_mass_assignment_wizard_manager,budget.role.mass.assignment.wizard.manager,model_budget_role_mass_assignment_wizard,budget.group_budget_manager,1,1,1,1
+access_budget_role_validation_wizard_user,budget.role.validation.wizard.user,model_budget_role_validation_wizard,budget.group_budget_user,1,1,1,1
+access_budget_role_validation_line_user,budget.role.validation.line.user,model_budget_role_validation_line,budget.group_budget_user,1,1,1,1
+access_budget_role_report_wizard_user,budget.role.report.wizard.user,model_budget_role_report_wizard,budget.group_budget_user,1,1,1,1
+
+# Допоміжні моделі
+access_budget_role_history_line_user,budget.role.history.line.user,model_budget_role_history_line,budget.group_budget_user,1,0,0,0
+access_budget_role_utils_user,budget.role.utils.user,model_budget_role_utils,budget.group_budget_user,1,0,0,0
+access_budget_role_notifications_user,budget.role.notifications.user,model_budget_role_notifications,budget.group_budget_user,1,0,0,0
+access_budget_role_validators_user,budget.role.validators.user,model_budget_role_validators,budget.group_budget_user,1,0,0,0

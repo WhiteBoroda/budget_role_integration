@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- Автоматичні завдання для контролю ролей -->
+    <record id="ir_cron_check_budget_roles" model="ir.cron">
+        <field name="name">Перевірка ролей в бюджетуванні</field>
+        <field name="model_id" ref="budget.model_budget_plan"/>
+        <field name="state">code</field>
+        <field name="code">
+            # Перевірка бюджетів без призначених ролей
+            budgets_without_roles = model.search([
+                ('state', 'in', ['draft', 'planning']),
+                ('use_role_based_approval', '=', True),
+                '|', '|',
+                ('budget_creator_role_id', '=', False),
+                ('budget_reviewer_role_id', '=', False),
+                ('budget_approver_role_id', '=', False)
+            ])
+
+            if budgets_without_roles:
+                # Відправити сповіщення адміністратору
+                admin_users = env['res.users'].search([('groups_id', 'in', [env.ref('base.group_system').id])])
+                for admin in admin_users:
+                    budgets_without_roles.activity_schedule(
+                        'mail.mail_activity_data_todo',
+                        user_id=admin.id,
+                        summary=f'Знайдено {len(budgets_without_roles)} бюджетів без ролей'
+                    )
+        </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Перевірка виконавців ролей -->
+    <record id="ir_cron_check_role_executors" model="ir.cron">
+        <field name="name">Перевірка виконавців ролей</field>
+        <field name="model_id" ref="budget.model_budget_plan"/>
+        <field name="state">code</field>
+        <field name="code">
+            # Перевірка бюджетів на узгодженні без виконавців ролей
+            budgets_coordination = model.search([
+                ('state', '=', 'coordination'),
+                ('use_role_based_approval', '=', True)
+            ])
+
+            issues = []
+            for budget in budgets_coordination:
+                if not budget.current_reviewer_ids:
+                    issues.append(f'Бюджет "{budget.display_name}" - немає перевіряючих')
+                if not budget.current_approver_ids:
+                    issues.append(f'Бюджет "{budget.display_name}" - немає затверджуючих')
+
+            if issues:
+                # Створення активності для відповідального за бюджет
+                for budget in budgets_coordination:
+                    if not budget.current_reviewer_ids or not budget.current_approver_ids:
+                        budget.activity_schedule(
+                            'mail.mail_activity_data_todo',
+                            user_id=budget.responsible_user_id.id,
+                            summary='Проблеми з ролями в бюджеті',
+                            note='Необхідно призначити виконавців ролей для продовження процесу затвердження'
+                        )
+        </field>
+        <field name="interval_number">4</field>
+        <field name="interval_type">hours</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(hours=4)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

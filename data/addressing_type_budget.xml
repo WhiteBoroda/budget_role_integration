@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+        <!-- Типи адресації для бюджетних ролей -->
+    <record id="addressing_type_budget_cbo" model="addressing.type">
+        <field name="name">Центр бюджетної відповідальності</field>
+        <field name="model_id" ref="budget.model_budget_responsibility_center"/>
+    </record>
+
+    <record id="addressing_type_budget_plan" model="addressing.type">
+        <field name="name">Бюджетний план</field>
+        <field name="model_id" ref="budget.model_budget_plan"/>
+    </record>
+
+    <record id="addressing_type_budget_type" model="addressing.type">
+        <field name="name">Тип бюджету</field>
+        <field name="model_id" ref="budget.model_budget_type"/>
+    </record>
+
+    <!-- Оновлення існуючих ролей з типами адресації -->
+    <record id="role_budget_creator" model="business.role.catalog">
+        <field name="first_addressation_id" ref="addressing_type_budget_cbo"/>
+        <field name="second_addressation_id" ref="addressing_type_budget_type"/>
+    </record>
+
+    <record id="role_budget_reviewer" model="business.role.catalog">
+        <field name="first_addressation_id" ref="addressing_type_budget_cbo"/>
+        <field name="second_addressation_id" ref="addressing_type_budget_type"/>
+    </record>
+
+    <record id="role_budget_approver" model="business.role.catalog">
+        <field name="first_addressation_id" ref="addressing_type_budget_cbo"/>
+        <field name="second_addressation_id" ref="addressing_type_budget_type"/>
+    </record>
+</odoo>

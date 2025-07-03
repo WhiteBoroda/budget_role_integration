@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+        <!-- Стандартні ролі для бюджетування -->
+    <record id="role_budget_creator" model="business.role.catalog">
+        <field name="role">Складач бюджету</field>
+        <field name="addressed">True</field>
+        <field name="personified">True</field>
+    </record>
+
+    <record id="role_budget_reviewer" model="business.role.catalog">
+        <field name="role">Перевіряючий бюджету</field>
+        <field name="addressed">True</field>
+        <field name="personified">True</field>
+    </record>
+
+    <record id="role_budget_approver" model="business.role.catalog">
+        <field name="role">Затверджуючий бюджету</field>
+        <field name="addressed">True</field>
+        <field name="personified">True</field>
+    </record>
+
+    <!-- Додаткові ролі -->
+    <record id="role_budget_controller" model="business.role.catalog">
+        <field name="role">Контролер бюджету</field>
+        <field name="addressed">True</field>
+        <field name="personified">True</field>
+    </record>
+
+    <record id="role_budget_analyst" model="business.role.catalog">
+        <field name="role">Аналітик бюджету</field>
+        <field name="addressed">True</field>
+        <field name="personified">True</field>
+    </record>
+
+    <!-- ==================================================================== -->
+    <!-- ФАЙЛ: data/budget_role_mapping_data.xml -->
+    <!-- ==================================================================== -->
+
+    <!-- Налаштування ролей для стратегічного рівня -->
+    <record id="mapping_strategic_level" model="budget.role.mapping">
+        <field name="name">Стратегічний рівень бюджетування</field>
+        <field name="sequence">10</field>
+        <field name="budget_level">strategic</field>
+        <field name="cbo_type">holding</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_controller"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+    </record>
+
+    <!-- Налаштування ролей для тактичного рівня -->
+    <record id="mapping_tactical_level" model="budget.role.mapping">
+        <field name="name">Тактичний рівень бюджетування</field>
+        <field name="sequence">20</field>
+        <field name="budget_level">tactical</field>
+        <field name="cbo_type">cluster</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+    </record>
+
+    <!-- Налаштування ролей для операційного рівня -->
+    <record id="mapping_operational_level" model="budget.role.mapping">
+        <field name="name">Операційний рівень бюджетування</field>
+        <field name="sequence">30</field>
+        <field name="budget_level">operational</field>
+        <field name="cbo_type">enterprise</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+    </record>
+
+    <!-- Налаштування ролей для функціонального рівня -->
+    <record id="mapping_functional_level" model="budget.role.mapping">
+        <field name="name">Функціональний рівень бюджетування</field>
+        <field name="sequence">40</field>
+        <field name="budget_level">functional</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+    </record>
+
+    <!-- Спеціальні налаштування для різних типів бюджетів -->
+    <record id="mapping_sales_budget" model="budget.role.mapping">
+        <field name="name">Бюджет продажів</field>
+        <field name="sequence">100</field>
+        <field name="budget_type_id" ref="budget.budget_type_01"/>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_analyst"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+    </record>
+</odoo>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================================================================== -->
+    <!-- ФАЙЛ: data/budget_role_mapping_data.xml -->
+    <!-- ==================================================================== -->
+
+    <!-- Налаштування зопоставлення ролей для різних рівнів бюджетування -->
+
+    <!-- Стратегічний рівень - Холдинг -->
+    <record id="mapping_strategic_holding" model="budget.role.mapping">
+        <field name="name">Стратегічний рівень - Холдинг</field>
+        <field name="sequence">10</field>
+        <field name="budget_level">strategic</field>
+        <field name="cbo_type">holding</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_controller"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Тактичний рівень - Кластер -->
+    <record id="mapping_tactical_cluster" model="budget.role.mapping">
+        <field name="name">Тактичний рівень - Кластер</field>
+        <field name="sequence">20</field>
+        <field name="budget_level">tactical</field>
+        <field name="cbo_type">cluster</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Тактичний рівень - Напрямок бізнесу -->
+    <record id="mapping_tactical_business_direction" model="budget.role.mapping">
+        <field name="name">Тактичний рівень - Напрямок бізнесу</field>
+        <field name="sequence">21</field>
+        <field name="budget_level">tactical</field>
+        <field name="cbo_type">business_direction</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Операційний рівень - Підприємство -->
+    <record id="mapping_operational_enterprise" model="budget.role.mapping">
+        <field name="name">Операційний рівень - Підприємство</field>
+        <field name="sequence">30</field>
+        <field name="budget_level">operational</field>
+        <field name="cbo_type">enterprise</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Операційний рівень - Департамент -->
+    <record id="mapping_operational_department" model="budget.role.mapping">
+        <field name="name">Операційний рівень - Департамент</field>
+        <field name="sequence">31</field>
+        <field name="budget_level">operational</field>
+        <field name="cbo_type">department</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Функціональний рівень - Відділ -->
+    <record id="mapping_functional_office" model="budget.role.mapping">
+        <field name="name">Функціональний рівень - Відділ</field>
+        <field name="sequence">40</field>
+        <field name="budget_level">functional</field>
+        <field name="cbo_type">office</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Функціональний рівень - Команда -->
+    <record id="mapping_functional_team" model="budget.role.mapping">
+        <field name="name">Функціональний рівень - Команда</field>
+        <field name="sequence">41</field>
+        <field name="budget_level">functional</field>
+        <field name="cbo_type">team</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Спеціальні налаштування для типів бюджетів -->
+
+    <!-- Бюджет продажів -->
+    <record id="mapping_sales_budget" model="budget.role.mapping">
+        <field name="name">Бюджет продажів - Спеціальні ролі</field>
+        <field name="sequence">100</field>
+        <field name="budget_type_id" ref="budget.budget_type_01"/>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_analyst"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Бюджет витрат на персонал -->
+    <record id="mapping_personnel_budget" model="budget.role.mapping">
+        <field name="name">Бюджет витрат на персонал</field>
+        <field name="sequence">101</field>
+        <field name="budget_type_id" ref="budget.budget_type_02"/>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Бюджет загальногосподарських витрат -->
+    <record id="mapping_general_expenses_budget" model="budget.role.mapping">
+        <field name="name">Бюджет загальногосподарських витрат</field>
+        <field name="sequence">102</field>
+        <field name="budget_type_id" ref="budget.budget_type_03"/>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_controller"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Бюджет маркетингових витрат -->
+    <record id="mapping_marketing_budget" model="budget.role.mapping">
+        <field name="name">Бюджет маркетингових витрат</field>
+        <field name="sequence">103</field>
+        <field name="budget_type_id" ref="budget.budget_type_05"/>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_analyst"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Загальне налаштування за замовчуванням -->
+    <record id="mapping_default_all" model="budget.role.mapping">
+        <field name="name">За замовчуванням - Всі бюджети</field>
+        <field name="sequence">999</field>
+        <field name="budget_creator_role_id" ref="role_budget_creator"/>
+        <field name="budget_reviewer_role_id" ref="role_budget_reviewer"/>
+        <field name="budget_approver_role_id" ref="role_budget_approver"/>
+        <field name="use_cbo_addressing">True</field>
+        <field name="active">True</field>
+    </record>
+
+</odoo>

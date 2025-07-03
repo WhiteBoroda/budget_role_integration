@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================================================================== -->
+    <!-- ФАЙЛ: views/budget_plan_roles_views.xml -->
+    <!-- ==================================================================== -->
+
+    <!-- Розширення форми бюджетного плану для бізнес-ролей -->
+    <record id="view_budget_plan_form_roles" model="ir.ui.view">
+        <field name="name">budget.plan.form.roles</field>
+        <field name="model">budget.plan</field>
+        <field name="inherit_id" ref="budget.view_budget_plan_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Додаємо розділ з бізнес-ролями після основної інформації -->
+            <xpath expr="//group[@name='budget_info']" position="after">
+                <group name="business_roles" string="Бізнес-ролі"
+                       attrs="{'invisible': [('use_role_based_approval', '=', False)]}">
+                    <group>
+                        <field name="use_role_based_approval"/>
+                        <field name="budget_creator_role_id"
+                               attrs="{'required': [('use_role_based_approval', '=', True)]}"/>
+                        <field name="budget_reviewer_role_id"
+                               attrs="{'required': [('use_role_based_approval', '=', True)]}"/>
+                        <field name="budget_approver_role_id"
+                               attrs="{'required': [('use_role_based_approval', '=', True)]}"/>
+                    </group>
+                    <group>
+                        <field name="role_addressing_model_1" invisible="1"/>
+                        <field name="role_addressing_id_1" string="ЦБО для ролей"
+                               attrs="{'readonly': [('cbo_id', '!=', False)]}"/>
+                        <button name="action_auto_assign_roles"
+                                string="Автопризначення ролей"
+                                type="object"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('use_role_based_approval', '=', False)]}"/>
+                        <button name="action_view_role_executors"
+                                string="Переглянути виконавців"
+                                type="object"
+                                attrs="{'invisible': [('use_role_based_approval', '=', False)]}"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <!-- Додаємо інформацію про поточних виконавців -->
+            <xpath expr="//group[@name='business_roles']" position="after">
+                <group name="current_executors" string="Поточні виконавці ролей"
+                       attrs="{'invisible': [('use_role_based_approval', '=', False)]}">
+                    <group>
+                        <field name="current_creator_ids" widget="many2many_tags" readonly="1"/>
+                        <field name="current_reviewer_ids" widget="many2many_tags" readonly="1"/>
+                        <field name="current_approver_ids" widget="many2many_tags" readonly="1"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <!-- Модифікуємо кнопки затвердження -->
+            <xpath expr="//header" position="inside">
+                <button name="action_send_coordination"
+                        string="Відправити на узгодження (Ролі)"
+                        type="object"
+                        class="oe_highlight"
+                        states="planning"
+                        attrs="{'invisible': [('use_role_based_approval', '=', False)]}"/>
+                <button name="action_approve"
+                        string="Затвердити (Ролі)"
+                        type="object"
+                        class="oe_highlight"
+                        states="coordination"
+                        attrs="{'invisible': [('use_role_based_approval', '=', False)]}"/>
+                <button name="action_request_revision"
+                        string="На доопрацювання (Ролі)"
+                        type="object"
+                        states="coordination"
+                        attrs="{'invisible': [('use_role_based_approval', '=', False)]}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Додаємо інформацію про ролі в tree view -->
+    <record id="view_budget_plan_tree_roles" model="ir.ui.view">
+        <field name="name">budget.plan.tree.roles</field>
+        <field name="model">budget.plan</field>
+        <field name="inherit_id" ref="budget.view_budget_plan_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="use_role_based_approval" string="Ролі"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

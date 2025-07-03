@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- ==================================================================== -->
+    <!-- ФАЙЛ: reports/budget_role_actions.xml -->
+    <!-- ==================================================================== -->
+
+    <!-- Action для зведеного звіту -->
+    <record id="action_budget_role_summary_report" model="ir.actions.report">
+        <field name="name">Зведений звіт по ролях</field>
+        <field name="model">budget.role.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">budget_role_integration.budget_role_summary_report</field>
+        <field name="report_file">budget_role_integration.budget_role_summary_report</field>
+        <field name="binding_model_id" ref="model_budget_plan"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Action для детального звіту -->
+    <record id="action_budget_role_detailed_report" model="ir.actions.report">
+        <field name="name">Детальний звіт по ролях</field>
+        <field name="model">budget.role.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">budget_role_integration.budget_role_detailed_report</field>
+        <field name="report_file">budget_role_integration.budget_role_detailed_report</field>
+        <field name="binding_model_id" ref="model_budget_plan"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Action для звіту проблем -->
+    <record id="action_budget_role_issues_report" model="ir.actions.report">
+        <field name="name">Звіт проблем з ролями</field>
+        <field name="model">budget.role.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">budget_role_integration.budget_role_issues_report</field>
+        <field name="report_file">budget_role_integration.budget_role_issues_report</field>
+        <field name="binding_model_id" ref="model_budget_plan"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

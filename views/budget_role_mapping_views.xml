@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+        <!-- Tree view для налаштувань ролей -->
+    <record id="view_budget_role_mapping_tree" model="ir.ui.view">
+        <field name="name">budget.role.mapping.tree</field>
+        <field name="model">budget.role.mapping</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="budget_type_id"/>
+                <field name="cbo_type"/>
+                <field name="budget_level"/>
+                <field name="budget_creator_role_id"/>
+                <field name="budget_reviewer_role_id"/>
+                <field name="budget_approver_role_id"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view для налаштувань ролей -->
+    <record id="view_budget_role_mapping_form" model="ir.ui.view">
+        <field name="name">budget.role.mapping.form</field>
+        <field name="model">budget.role.mapping</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <field name="active" widget="boolean_button"
+                               options="{'terminology': 'archive'}"/>
+                    </div>
+
+                    <group>
+                        <group name="basic_info">
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="company_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <group string="Критерії застосування">
+                        <group>
+                            <field name="budget_type_id"/>
+                            <field name="cbo_type"/>
+                        </group>
+                        <group>
+                            <field name="budget_level"/>
+                        </group>
+                    </group>
+
+                    <group string="Призначення ролей">
+                        <group>
+                            <field name="budget_creator_role_id"
+                                   domain="[('role', 'ilike', 'складач')]"/>
+                            <field name="budget_reviewer_role_id"
+                                   domain="[('role', 'ilike', 'перевір')]"/>
+                            <field name="budget_approver_role_id"
+                                   domain="[('role', 'ilike', 'затвердж')]"/>
+                        </group>
+                        <group>
+                            <field name="use_cbo_addressing"/>
+                        </group>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search view для налаштувань ролей -->
+    <record id="view_budget_role_mapping_search" model="ir.ui.view">
+        <field name="name">budget.role.mapping.search</field>
+        <field name="model">budget.role.mapping</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="budget_type_id"/>
+                <field name="cbo_type"/>
+                <field name="budget_level"/>
+
+                <filter string="Активні" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Архівні" name="archived" domain="[('active', '=', False)]"/>
+
+                <group expand="0" string="Групувати за">
+                    <filter string="Тип бюджету" name="group_budget_type"
+                            context="{'group_by': 'budget_type_id'}"/>
+                    <filter string="Тип ЦБО" name="group_cbo_type"
+                            context="{'group_by': 'cbo_type'}"/>
+                    <filter string="Рівень бюджетування" name="group_budget_level"
+                            context="{'group_by': 'budget_level'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action для налаштувань ролей -->
+    <record id="action_budget_role_mapping" model="ir.actions.act_window">
+        <field name="name">Налаштування ролей бюджетування</field>
+        <field name="res_model">budget.role.mapping</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Створіть налаштування ролей для автоматичного призначення!
+            </p>
+            <p>
+                Налаштування дозволяють автоматично призначати бізнес-ролі
+                для різних типів бюджетів та ЦБО.
+            </p>
+        </field>
+    </record>
+</odoo>

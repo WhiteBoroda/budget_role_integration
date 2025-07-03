@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================================================================== -->
+    <!-- ФАЙЛ: reports/budget_role_reports.xml -->
+    <!-- ==================================================================== -->
+
+    <!-- Зведений звіт по ролях в бюджетуванні -->
+    <template id="budget_role_summary_report">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2>Зведений звіт по ролях в бюджетуванні</h2>
+                            <p>
+                                Період: <span t-esc="data['date_from']"/> - <span t-esc="data['date_to']"/>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Загальна статистика</h4>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>Загальна кількість бюджетів з ролями:</td>
+                                    <td><span t-esc="len(data['budgets'])"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Кількість активних виконавців ролей:</td>
+                                    <td><span t-esc="len(data['executors'])"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Унікальних користувачів в ролях:</td>
+                                    <td><span t-esc="len(data['executors'].mapped('user_id'))"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Бюджети по ЦБО</h4>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>ЦБО</th>
+                                        <th>Кількість бюджетів</th>
+                                        <th>З ролями</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="cbo_groups" t-value="data['budgets'].grouped('cbo_id')"/>
+                                    <t t-foreach="cbo_groups" t-as="cbo">
+                                        <tr>
+                                            <td><span t-esc="cbo.name"/></td>
+                                            <td><span t-esc="len(cbo_groups[cbo])"/></td>
+                                            <td>
+                                                <span t-esc="len(cbo_groups[cbo].filtered(lambda b: b.use_role_based_approval))"/>
+                                            </td>
+                                            <td>
+                                                <t t-set="approved_count" t-value="len(cbo_groups[cbo].filtered(lambda b: b.state == 'approved'))"/>
+                                                <span t-esc="approved_count"/>/<span t-esc="len(cbo_groups[cbo])"/> затверджено
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Використання ролей</h4>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Роль</th>
+                                        <th>Кількість призначень</th>
+                                        <th>Унікальних виконавців</th>
+                                        <th>Активні виконавці</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="role_stats" t-value="{}"/>
+                                    <t t-foreach="data['executors']" t-as="executor">
+                                        <t t-set="role_id" t-value="executor.role_id.id"/>
+                                        <t t-if="role_id not in role_stats">
+                                            <t t-set="role_stats[role_id]" t-value="{'role': executor.role_id, 'total': 0, 'users': set(), 'active': 0}"/>
+                                        </t>
+                                        <t t-set="role_stats[role_id]['total']" t-value="role_stats[role_id]['total'] + 1"/>
+                                        <t t-set="dummy" t-value="role_stats[role_id]['users'].add(executor.user_id.id)"/>
+                                        <t t-if="executor.status_role">
+                                            <t t-set="role_stats[role_id]['active']" t-value="role_stats[role_id]['active'] + 1"/>
+                                        </t>
+                                    </t>
+
+                                    <t t-foreach="role_stats.values()" t-as="stat">
+                                        <tr>
+                                            <td><span t-esc="stat['role'].role"/></td>
+                                            <td><span t-esc="stat['total']"/></td>
+                                            <td><span t-esc="len(stat['users'])"/></td>
+                                            <td><span t-esc="stat['active']"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Детальний звіт по виконавцях ролей -->
+    <template id="budget_role_detailed_report">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2>Детальний звіт по виконавцях ролей</h2>
+                            <p>
+                                Період: <span t-esc="data['date_from']"/> - <span t-esc="data['date_to']"/>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Виконавці ролей</h4>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Користувач</th>
+                                        <th>Роль</th>
+                                        <th>ЦБО</th>
+                                        <th>Дата призначення</th>
+                                        <th>Статус</th>
+                                        <th>Примітка</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="data['executors']" t-as="executor">
+                                        <tr>
+                                            <td><span t-esc="executor.user_id.name"/></td>
+                                            <td><span t-esc="executor.role_id.role"/></td>
+                                            <td>
+                                                <t t-if="executor.first_addressation_id">
+                                                    <span t-esc="executor.primary_addressing"/>
+                                                </t>
+                                                <t t-else="">
+                                                    Загальна
+                                                </t>
+                                            </td>
+                                            <td><span t-esc="executor.date"/></td>
+                                            <td>
+                                                <span t-if="executor.status_role" class="text-success">Активний</span>
+                                                <span t-else="" class="text-muted">Неактивний</span>
+                                            </td>
+                                            <td><span t-esc="executor.note or ''"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Бюджети з призначеними ролями</h4>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Бюджет</th>
+                                        <th>ЦБО</th>
+                                        <th>Складач</th>
+                                        <th>Перевіряючий</th>
+                                        <th>Затверджуючий</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="data['budgets']" t-as="budget">
+                                        <tr>
+                                            <td><span t-esc="budget.name"/></td>
+                                            <td><span t-esc="budget.cbo_id.name"/></td>
+                                            <td>
+                                                <span t-esc="budget.budget_creator_role_id.role or 'Не призначено'"
+                                                      t-att-class="'text-muted' if not budget.budget_creator_role_id else ''"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="budget.budget_reviewer_role_id.role or 'Не призначено'"
+                                                      t-att-class="'text-muted' if not budget.budget_reviewer_role_id else ''"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="budget.budget_approver_role_id.role or 'Не призначено'"
+                                                      t-att-class="'text-muted' if not budget.budget_approver_role_id else ''"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="dict(budget._fields['state'].selection)[budget.state]"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Звіт проблем з ролями -->
+    <template id="budget_role_issues_report">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2>Звіт проблем з ролями в бюджетуванні</h2>
+                            <p>
+                                Дата формування: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d.%m.%Y %H:%M')"/>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Зведення проблем</h4>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>Критичні проблеми:</td>
+                                    <td class="text-danger">
+                                        <strong>
+                                            <span t-esc="len(data['validation_results'].filtered(lambda r: r.issue_type == 'critical'))"/>
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Попередження:</td>
+                                    <td class="text-warning">
+                                        <span t-esc="len(data['validation_results'].filtered(lambda r: r.issue_type == 'warning'))"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Загальна кількість проблем:</td>
+                                    <td>
+                                        <span t-esc="len(data['validation_results'])"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Детальний список проблем</h4>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Тип</th>
+                                        <th>Бюджет</th>
+                                        <th>Опис проблеми</th>
+                                        <th>Рекомендована дія</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="data['validation_results']" t-as="issue">
+                                        <tr>
+                                            <td>
+                                                <span t-if="issue.issue_type == 'critical'"
+                                                      class="badge badge-danger">Критична</span>
+                                                <span t-elif="issue.issue_type == 'warning'"
+                                                      class="badge badge-warning">Попередження</span>
+                                                <span t-else=""
+                                                      class="badge badge-info">Інформація</span>
+                                            </td>
+                                            <td>
+                                                <span t-if="issue.budget_id" t-esc="issue.budget_id.name"/>
+                                                <span t-else="" class="text-muted">Загальна</span>
+                                            </td>
+                                            <td><span t-esc="issue.issue_description"/></td>
+                                            <td><span t-esc="issue.suggested_action"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Рекомендації</h4>
+                            <ul>
+                                <li>Регулярно перевіряйте наявність виконавців для всіх бізнес-ролей</li>
+                                <li>Використовуйте автоматичне призначення ролей через налаштування</li>
+                                <li>Контролюйте актуальність призначень через систему заміщень</li>
+                                <li>Проводьте валідацію ролей перед початком бюджетного циклу</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

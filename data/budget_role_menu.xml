@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================================================================== -->
+    <!-- ФАЙЛ: data/budget_role_menu.xml -->
+    <!-- ==================================================================== -->
+
+    <!-- Меню для управління ролями в бюджетуванні -->
+    <menuitem id="menu_budget_roles"
+              name="Бізнес-ролі"
+              parent="budget.menu_budget_configuration"
+              sequence="50"/>
+
+    <!-- Налаштування ролей -->
+    <menuitem id="menu_budget_role_mapping"
+              name="Налаштування ролей"
+              parent="menu_budget_roles"
+              action="action_budget_role_mapping"
+              sequence="10"/>
+
+    <!-- Контроль ролей -->
+    <menuitem id="menu_budget_roles_control"
+              name="Контроль ролей"
+              parent="menu_budget_roles"
+              sequence="20"/>
+
+    <menuitem id="menu_budget_roles_dashboard"
+              name="Дашборд ролей"
+              parent="menu_budget_roles_control"
+              action="action_budget_roles_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_budget_without_roles"
+              name="Бюджети без ролей"
+              parent="menu_budget_roles_control"
+              action="action_budget_without_roles"
+              sequence="20"/>
+
+    <menuitem id="menu_budget_role_issues"
+              name="Проблеми з ролями"
+              parent="menu_budget_roles_control"
+              action="action_budget_role_issues"
+              sequence="30"/>
+</odoo>

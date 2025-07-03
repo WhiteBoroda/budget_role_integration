@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- Шаблони повідомлень для ролевої системи -->
+    <record id="mail_template_budget_role_assignment" model="mail.template">
+        <field name="name">Призначення ролі в бюджетуванні</field>
+        <field name="model_id" ref="budget.model_budget_plan"/>
+        <field name="subject">Призначення ролі: ${object.display_name}</field>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p>Шановний колего,</p>
+
+                <p>Вам призначено роль в процесі бюджетування:</p>
+
+                <ul>
+                    <li><strong>Бюджет:</strong> ${object.display_name}</li>
+                    <li><strong>ЦБО:</strong> ${object.cbo_id.name}</li>
+                    <li><strong>Відповідальний:</strong> ${object.responsible_user_id.name}</li>
+                    <li><strong>Статус:</strong> ${object.state}</li>
+                </ul>
+
+                <p>Будь ласка, зайдіть до системи для виконання ваших обов'язків.</p>
+
+                <p>З повагою,<br/>Система бюджетування</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <record id="mail_template_budget_role_coordination" model="mail.template">
+        <field name="name">Бюджет на узгодженні (ролева система)</field>
+        <field name="model_id" ref="budget.model_budget_plan"/>
+        <field name="subject">Узгодження бюджету: ${object.display_name}</field>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p>Шановний ${object.current_reviewer_ids[0].name if object.current_reviewer_ids else 'координаторе'},</p>
+
+                <p>Надійшов бюджет для узгодження:</p>
+
+                <ul>
+                    <li><strong>Назва:</strong> ${object.display_name}</li>
+                    <li><strong>Тип бюджету:</strong> ${object.budget_type_id.name}</li>
+                    <li><strong>ЦБО:</strong> ${object.cbo_id.name}</li>
+                    <li><strong>Планова сума:</strong> ${object.planned_amount} ${object.currency_id.name}</li>
+                    <li><strong>Відповідальний:</strong> ${object.responsible_user_id.name}</li>
+                    <li><strong>Ваша роль:</strong> ${object.budget_reviewer_role_id.role}</li>
+                </ul>
+
+                <p>Потребується ваше рішення щодо затвердження або доопрацювання.</p>
+
+                <p>З повагою,<br/>Система бюджетування</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>

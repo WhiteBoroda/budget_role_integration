@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Розширення головної сторінки порталу -->
+    <template id="portal_my_home_budget_roles" name="Portal My Home: Budget Roles" inherit_id="portal.portal_my_home" priority="50">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Бюджети з ролями</t>
+                <t t-set="url" t-value="'/my/budget_roles'"/>
+                <t t-set="placeholder_count" t-value="'budget_role_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Сторінка зі списком бюджетів користувача -->
+    <template id="portal_my_budget_roles" name="My Budget Roles">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Бюджети з ролями</t>
+            </t>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <strong>Інформація:</strong> Тут відображаються бюджети, в яких ви виконуєте бізнес-ролі
+                        (складач, перевіряючий або затверджуючий).
+                    </div>
+                </div>
+            </div>
+
+            <t t-if="not budgets">
+                <div class="alert alert-warning mt-3">
+                    <strong>Увага:</strong> У вас немає призначених ролей в бюджетуванні.
+                    Зверніться до адміністратора системи для отримання доступу.
+                </div>
+            </t>
+
+            <t t-if="budgets">
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Назва бюджету</th>
+                                        <th>ЦБО</th>
+                                        <th>Тип бюджету</th>
+                                        <th>Статус</th>
+                                        <th>Ваші ролі</th>
+                                        <th>Дії</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="budgets" t-as="budget">
+                                        <tr>
+                                            <td>
+                                                <strong t-esc="budget.name"/>
+                                                <br/>
+                                                <small class="text-muted">
+                                                    Період: <span t-esc="budget.period_id.name"/>
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <span t-esc="budget.cbo_id.name"/>
+                                                <br/>
+                                                <small class="text-muted" t-esc="budget.cbo_id.code"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="budget.budget_type_id.name"/>
+                                            </td>
+                                            <td>
+                                                <span class="badge" t-attf-class="badge-#{
+                                                    'success' if budget.state == 'approved' else
+                                                    'warning' if budget.state == 'coordination' else
+                                                    'info' if budget.state == 'planning' else
+                                                    'danger' if budget.state == 'revision' else
+                                                    'secondary'
+                                                }">
+                                                    <t t-if="budget.state == 'draft'">Чернетка</t>
+                                                    <t t-elif="budget.state == 'planning'">Планування</t>
+                                                    <t t-elif="budget.state == 'coordination'">Узгодження</t>
+                                                    <t t-elif="budget.state == 'approved'">Затверджений</t>
+                                                    <t t-elif="budget.state == 'revision'">Доопрацювання</t>
+                                                    <t t-elif="budget.state == 'executed'">Виконується</t>
+                                                    <t t-elif="budget.state == 'closed'">Закритий</t>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <t t-set="user_roles" t-value="[]"/>
+                                                <t t-if="user.id in budget.current_creator_ids.ids">
+                                                    <t t-set="user_roles" t-value="user_roles + ['Складач']"/>
+                                                </t>
+                                                <t t-if="user.id in budget.current_reviewer_ids.ids">
+                                                    <t t-set="user_roles" t-value="user_roles + ['Перевіряючий']"/>
+                                                </t>
+                                                <t t-if="user.id in budget.current_approver_ids.ids">
+                                                    <t t-set="user_roles" t-value="user_roles + ['Затверджуючий']"/>
+                                                </t>
+
+                                                <t t-foreach="user_roles" t-as="role">
+                                                    <span class="badge badge-primary mr-1" t-esc="role"/>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <a t-attf-href="/my/budget_roles/#{budget.id}"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fa fa-eye"/> Переглянути
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Детальна сторінка бюджету -->
+    <template id="portal_budget_role_detail" name="Budget Role Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="title" t-value="budget.name"/>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>
+                                <i class="fa fa-calculator"/> <span t-esc="budget.name"/>
+                                <span class="badge ml-2" t-attf-class="badge-#{
+                                    'success' if budget.state == 'approved' else
+                                    'warning' if budget.state == 'coordination' else
+                                    'info' if budget.state == 'planning' else
+                                    'danger' if budget.state == 'revision' else
+                                    'secondary'
+                                }">
+                                    <t t-if="budget.state == 'draft'">Чернетка</t>
+                                    <t t-elif="budget.state == 'planning'">Планування</t>
+                                    <t t-elif="budget.state == 'coordination'">Узгодження</t>
+                                    <t t-elif="budget.state == 'approved'">Затверджений</t>
+                                    <t t-elif="budget.state == 'revision'">Доопрацювання</t>
+                                    <t t-elif="budget.state == 'executed'">Виконується</t>
+                                    <t t-elif="budget.state == 'closed'">Закритий</t>
+                                </span>
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Загальна інформація</h6>
+                                    <dl class="row">
+                                        <dt class="col-sm-4">ЦБО:</dt>
+                                        <dd class="col-sm-8" t-esc="budget.cbo_id.name"/>
+
+                                        <dt class="col-sm-4">Тип бюджету:</dt>
+                                        <dd class="col-sm-8" t-esc="budget.budget_type_id.name"/>
+
+                                        <dt class="col-sm-4">Період:</dt>
+                                        <dd class="col-sm-8" t-esc="budget.period_id.name"/>
+
+                                        <dt class="col-sm-4">Підприємство:</dt>
+                                        <dd class="col-sm-8" t-esc="budget.company_id.name"/>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Фінансова інформація</h6>
+                                    <dl class="row">
+                                        <dt class="col-sm-6">Планова сума:</dt>
+                                        <dd class="col-sm-6">
+                                            <span t-esc="budget.planned_amount"
+                                                  t-options="{'widget': 'monetary', 'display_currency': budget.currency_id}"/>
+                                        </dd>
+
+                                        <dt class="col-sm-6">Фактична сума:</dt>
+                                        <dd class="col-sm-6">
+                                            <span t-esc="budget.actual_amount"
+                                                  t-options="{'widget': 'monetary', 'display_currency': budget.currency_id}"/>
+                                        </dd>
+
+                                        <dt class="col-sm-6">Доступно:</dt>
+                                        <dd class="col-sm-6">
+                                            <span t-esc="budget.available_amount"
+                                                  t-options="{'widget': 'monetary', 'display_currency': budget.currency_id}"/>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <t t-if="budget.notes">
+                                <h6 class="mt-3">Примітки</h6>
+                                <p t-esc="budget.notes"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Інформація про ролі -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6><i class="fa fa-users"/> Ваші ролі в бюджеті</h6>
+                        </div>
+                        <div class="card-body">
+                            <t t-if="user_roles">
+                                <t t-foreach="user_roles" t-as="role">
+                                    <span class="badge badge-primary d-block mb-2" t-esc="role"/>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted">Немає призначених ролей</p>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Інформація про відповідальних -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6><i class="fa fa-user-circle"/> Відповідальні особи</h6>
+                        </div>
+                        <div class="card-body">
+                            <dl>
+                                <dt>Відповідальний планувальник:</dt>
+                                <dd t-esc="budget.responsible_user_id.name"/>
+
+                                <t t-if="budget.current_reviewer_ids">
+                                    <dt>Поточні перевіряючі:</dt>
+                                    <dd>
+                                        <t t-foreach="budget.current_reviewer_ids" t-as="reviewer">
+                                            <span class="badge badge-info mr-1" t-esc="reviewer.name"/>
+                                        </t>
+                                    </dd>
+                                </t>
+
+                                <t t-if="budget.current_approver_ids">
+                                    <dt>Поточні затверджуючі:</dt>
+                                    <dd>
+                                        <t t-foreach="budget.current_approver_ids" t-as="approver">
+                                            <span class="badge badge-success mr-1" t-esc="approver.name"/>
+                                        </t>
+                                    </dd>
+                                </t>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <!-- Дії користувача -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6><i class="fa fa-cogs"/> Доступні дії</h6>
+                        </div>
+                        <div class="card-body">
+                            <t t-if="'Складач' in user_roles and budget.state in ['draft', 'planning', 'revision']">
+                                <p class="text-success">
+                                    <i class="fa fa-check-circle"/> Ви можете редагувати цей бюджет
+                                </p>
+                            </t>
+
+                            <t t-if="'Перевіряючий' in user_roles and budget.state == 'coordination'">
+                                <p class="text-warning">
+                                    <i class="fa fa-eye"/> Бюджет очікує на вашу перевірку
+                                </p>
+                            </t>
+
+                            <t t-if="'Затверджуючий' in user_roles and budget.state == 'coordination'">
+                                <p class="text-info">
+                                    <i class="fa fa-stamp"/> Бюджет очікує на ваше затвердження
+                                </p>
+                            </t>
+
+                            <a href="/my/budget_roles" class="btn btn-outline-secondary btn-sm">
+                                <i class="fa fa-arrow-left"/> Повернутися до списку
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

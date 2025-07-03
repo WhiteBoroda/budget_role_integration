@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Додаткові групи для ролевої системи -->
+
+    <record id="group_budget_role_admin" model="res.groups">
+        <field name="name">Адміністратор ролей бюджетування</field>
+        <field name="category_id" ref="budget.module_budget_category"/>
+        <field name="implied_ids" eval="[(4, ref('budget.group_budget_manager'))]"/>
+        <field name="comment">Повні права на налаштування ролей в бюджетуванні</field>
+    </record>
+
+    <record id="group_budget_role_viewer" model="res.groups">
+        <field name="name">Перегляд ролей бюджетування</field>
+        <field name="category_id" ref="budget.module_budget_category"/>
+        <field name="implied_ids" eval="[(4, ref('budget.group_budget_user'))]"/>
+        <field name="comment">Перегляд інформації про ролі без можливості редагування</field>
+    </record>
+
+</odoo>

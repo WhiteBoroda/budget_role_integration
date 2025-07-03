@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Правила доступу для ролевої системи бюджетування -->
+
+    <!-- Користувачі можуть бачити тільки свої бюджети або де вони виконавці ролей -->
+    <record id="budget_plan_role_rule" model="ir.rule">
+        <field name="name">Budget Plan Role Access Rule</field>
+        <field name="model_id" ref="budget.model_budget_plan"/>
+        <field name="domain_force">
+            ['|', '|', '|', '|', '|',
+             ('responsible_user_id', '=', user.id),
+             ('current_creator_ids', 'in', [user.id]),
+             ('current_reviewer_ids', 'in', [user.id]),
+             ('current_approver_ids', 'in', [user.id]),
+             ('create_uid', '=', user.id),
+             ('company_id', 'in', company_ids)]
+        </field>
+        <field name="groups" eval="[(4, ref('budget.group_budget_user'))]"/>
+    </record>
+
+    <!-- Менеджери мають повний доступ -->
+    <record id="budget_plan_manager_rule" model="ir.rule">
+        <field name="name">Budget Plan Manager Rule</field>
+        <field name="model_id" ref="budget.model_budget_plan"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('budget.group_budget_manager'))]"/>
+    </record>
+
+    <!-- Адміністратори ролей мають повний доступ до налаштувань -->
+    <record id="budget_role_mapping_admin_rule" model="ir.rule">
+        <field name="name">Budget Role Mapping Admin Rule</field>
+        <field name="model_id" ref="model_budget_role_mapping"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_budget_role_admin'))]"/>
+    </record>
+
+    <!-- Звичайні користувачі можуть тільки читати налаштування -->
+    <record id="budget_role_mapping_user_rule" model="ir.rule">
+        <field name="name">Budget Role Mapping User Rule</field>
+        <field name="model_id" ref="model_budget_role_mapping"/>
+        <field name="domain_force">[('active', '=', True)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="groups" eval="[(4, ref('budget.group_budget_user'))]"/>
+    </record>
+
+    <!-- Доступ до виконавців ролей через business_role_executor -->
+    <record id="business_role_executor_budget_rule" model="ir.rule">
+        <field name="name">Business Role Executor Budget Rule</field>
+        <field name="model_id" ref="business_role_executor.model_business_role_executor"/>
+        <field name="domain_force">
+            ['|', '|',
+             ('user_id', '=', user.id),
+             ('role_id.role', 'ilike', 'бюджет'),
+             ('res_model_address_1', '=', 'budget.responsibility.center')]
+        </field>
+        <field name="groups" eval="[(4, ref('budget.group_budget_user'))]"/>
+    </record>
+
+</odoo>
